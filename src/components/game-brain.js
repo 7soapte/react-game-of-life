@@ -1,18 +1,24 @@
-const gameBrain = (arr) => {
-  // Any live cell with fewer than two live neighbours dies, as if by underpopulation.
-  // neighbour < 2 => cell dead
-  // Any live cell with more than three live neighbours dies, as if by overpopulation.
-  // neighbour > 3 => cell dead
-  // Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-  // neighbours === 3 && cell === 0 => cell = 1;
+export default function gameBrain(arr, arrRow, arrCols) {
+  let newArr = [...arr];
+  for (let i = 0; i < arrRow; i++) {
+    for (let j = 0; j < arrCols; j++) {
+      let sum = 0;
+      for (let k = -1; k < 2; k++) {
+        for (let l = -1; l < 2; l++) {
+          sum += arr[(i + k + arrRow) % arrRow][(j + l + arrCols) % arrCols];
+        }
+      }
+      if (arr[i][j]) sum--;
 
-  const length = arr.length;
-  for (let i = 0; i < length; i++) {
-    for (let j = 0; j < length; j++) {
-      if (arr[i][j]) {
+      // Any live cell with two or three live neighbours survives.
+      // Any dead cell with three live neighbours becomes a live cell.
+      // All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+      if (sum < 2 || sum > 3) {
+        newArr[i][j] = 0;
+      } else if (arr[i][j] === 0 && sum === 3) {
+        newArr[i][j] = 1;
       }
     }
   }
-};
-
-export default gameBrain;
+  return newArr;
+}
